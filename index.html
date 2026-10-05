@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Account Assistant: Update office phone number</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#EEF2F4;--surface:#fff;--ink:#12262E;--muted:#5B6E76;--line:#D5DEE2;--brand:#0B4F5C;--brand-ink:#fff;--bot:#fff;--user:#0B4F5C;--ok:#1B7F4B;--err:#B3261E;--chip:#E4EEF0;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0C171B;--surface:#14252B;--ink:#E6EEF0;--muted:#93A6AD;--line:#27404A;--brand:#5CC0D1;--brand-ink:#08262D;--bot:#1A2F36;--user:#1D5A68;--ok:#5FD39A;--err:#FF8A80;--chip:#1E3740}}
+:root[data-theme="dark"]{--bg:#0C171B;--surface:#14252B;--ink:#E6EEF0;--muted:#93A6AD;--line:#27404A;--brand:#5CC0D1;--brand-ink:#08262D;--bot:#1A2F36;--user:#1D5A68;--ok:#5FD39A;--err:#FF8A80;--chip:#1E3740}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0}
+body{background:var(--bg);color:var(--ink);font:15px/1.45 "Instrument Sans",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;display:flex;justify-content:center}
+.app{width:100%;max-width:440px;height:100%;display:flex;flex-direction:column;background:var(--surface);border-inline:1px solid var(--line)}
+header{display:flex;align-items:center;gap:10px;padding:12px 16px;border-bottom:1px solid var(--line)}
+.av{width:36px;height:36px;border-radius:10px;background:var(--brand);display:grid;place-items:center;flex:none}
+.av svg{width:20px;height:20px;fill:none;stroke:var(--brand-ink);stroke-width:2}
+header b{display:block;font-weight:600}
+header small{color:var(--muted);font-size:12px}
+header button{margin-left:auto}
+#log{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:10px;background:var(--bg)}
+.m{max-width:86%;padding:10px 13px;border-radius:14px;animation:in .18s ease-out}
+@keyframes in{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){.m{animation:none}}
+.bot{background:var(--bot);border:1px solid var(--line);border-bottom-left-radius:4px;align-self:flex-start}
+.usr{background:var(--user);color:#fff;border-bottom-right-radius:4px;align-self:flex-end}
+.ok{border-color:var(--ok)}
+.ok .t{color:var(--ok);font-weight:600}
+.err{border-color:var(--err)}
+.typing{display:flex;gap:4px;padding:14px}
+.typing i{width:6px;height:6px;border-radius:50%;background:var(--muted);animation:b 1s infinite}
+.typing i:nth-child(2){animation-delay:.15s}.typing i:nth-child(3){animation-delay:.3s}
+@keyframes b{50%{opacity:.25}}
+.row{display:flex;flex-wrap:wrap;gap:8px;align-self:flex-start;max-width:92%}
+button{font:inherit;cursor:pointer}
+.q{border:1.5px solid var(--brand);background:transparent;color:var(--brand);padding:8px 14px;border-radius:999px;font-weight:500}
+.q.p{background:var(--brand);color:var(--brand-ink)}
+.q:disabled{opacity:.45;cursor:default}
+.q.sel{background:var(--chip);border-color:var(--chip);color:var(--ink);opacity:1}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid var(--brand);outline-offset:2px}
+.info{border:0;background:var(--chip);color:var(--brand);width:20px;height:20px;border-radius:50%;font-weight:600;font-size:12px;padding:0;vertical-align:1px;margin-left:4px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px;align-self:flex-start;width:90%;display:flex;flex-direction:column;gap:10px;animation:in .18s ease-out}
+.card label{font-size:12px;color:var(--muted);font-weight:500}
+.f{display:flex;gap:8px}
+select,input.n{font:inherit;color:var(--ink);background:var(--surface);border:1.5px solid var(--line);border-radius:10px;padding:10px}
+select{max-width:46%}
+input.n{flex:1;min-width:0}
+input.bad{border-color:var(--err)}
+.hint{font-size:12px;color:var(--err);min-height:16px;margin:0}
+.big{font-size:18px;font-weight:600;letter-spacing:.2px}
+.slot{display:flex;flex-direction:column;gap:6px}
+.kv{display:flex;flex-direction:column;gap:2px;padding-bottom:8px;border-bottom:1px solid var(--line)}
+.kv:last-of-type{border:0;padding:0}
+.lnk{background:none;border:0;color:var(--brand);text-decoration:underline;padding:0;align-self:flex-start;font-size:13px}
+.pop{position:fixed;z-index:5;max-width:280px;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px 14px;box-shadow:0 8px 24px rgba(0,0,0,.18)}
+.pop b{display:block;margin-bottom:4px}
+.pop button{position:absolute;top:4px;right:6px;border:0;background:none;color:var(--muted);font-size:16px}
+form.in{display:flex;gap:8px;padding:10px 12px;border-top:1px solid var(--line);background:var(--surface)}
+form.in input{flex:1;font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:999px;padding:10px 14px}
+form.in button{background:var(--brand);color:var(--brand-ink);border:0;border-radius:999px;padding:0 16px;font-weight:600}
+.ghost{background:none;border:1px solid var(--line);color:var(--muted);border-radius:8px;padding:4px 8px;font-size:12px}
+.scrim{position:fixed;inset:0;background:rgba(0,0,0,.5);display:grid;place-items:center;z-index:9;padding:20px}
+.dlg{background:var(--surface);border-radius:18px;padding:24px;max-width:320px;width:100%;text-align:center;display:flex;flex-direction:column;gap:12px}
+.face{width:64px;height:64px;margin:0 auto;border:2.5px solid var(--brand);border-radius:18px;display:grid;place-items:center;font-size:30px}
+.dlg p{margin:0;color:var(--muted);font-size:14px}
+.dlg h2{margin:0;font-size:17px}
+</style>
+</head>
+<body>
+<div class="app">
+  <header>
+    <div class="av"><svg viewBox="0 0 24 24"><path d="M12 3l8 3v6c0 4.5-3.2 8-8 9-4.8-1-8-4.5-8-9V6l8-3z"/><path d="M8.5 12l2.5 2.5 4.5-5"/></svg></div>
+    <div><b>Account Assistant</b><small>Secure chat</small></div>
+    <button class="ghost" id="restart">Restart</button>
+  </header>
+  <main id="log" aria-live="polite"></main>
+  <form class="in" id="form"><input id="txt" autocomplete="off" placeholder="Type a message" aria-label="Type a message"><button>Send</button></form>
+</div>
+
+<script>
+// Prototype data. Current number on file is a demo value used for the duplicate check.
+const CUR = [{ci:0,d:"5550102030"},{ci:3,d:"81234567"}];
+const C = [
+ {n:"United States",c:"US",d:"+1",len:10,f:[3,3,4],fl:"🇺🇸"},
+ {n:"Canada",c:"CA",d:"+1",len:10,f:[3,3,4],fl:"🇨🇦"},
+ {n:"United Kingdom",c:"GB",d:"+44",len:10,f:[4,6],fl:"🇬🇧"},
+ {n:"Singapore",c:"SG",d:"+65",len:8,f:[4,4],fl:"🇸🇬"},
+ {n:"India",c:"IN",d:"+91",len:10,f:[5,5],fl:"🇮🇳"},
+ {n:"Australia",c:"AU",d:"+61",len:9,f:[4,3,2],fl:"🇦🇺"}
+];
+const $ = s => document.querySelector(s);
+const log = $("#log"), txt = $("#txt");
+let state = "",  newNum = "", fails = 0, badPick = 0, busy = false;
+
+const wait = ms => new Promise(r => setTimeout(r, ms));
+const scroll = () => log.scrollTo({top: log.scrollHeight, behavior: "smooth"});
+function add(cls, html){ const d = document.createElement("div"); d.className = "m " + cls; d.innerHTML = html; log.appendChild(d); scroll(); return d; }
+const user = t => add("usr", esc(t));
+function esc(s){ return s.replace(/[&<>]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;"}[c])); }
+
+async function bot(html, cls = ""){
+  const t = add("bot typing", "<i></i><i></i><i></i>");
+  await wait(650);
+  t.remove();
+  return add("bot " + cls, html);
+}
+function quick(opts){
+  const row = document.createElement("div"); row.className = "row";
+  opts.forEach((o, i) => {
+    const b = document.createElement("button");
+    b.className = "q" + (o.p ? " p" : ""); b.textContent = o.label;
+    b.onclick = () => {
+      if (busy) return;
+      row.querySelectorAll("button").forEach(x => { x.disabled = true; });
+      b.classList.add("sel");
+      user(o.echo || o.label); o.go();
+    };
+    row.appendChild(b);
+  });
+  log.appendChild(row); scroll();
+}
+function lock(el){ el.querySelectorAll("button,input,select").forEach(x => x.disabled = true); }
+
+// ---------- Phase 1 ----------
+async function greet(returning){
+  state = "GREETING";
+  if (returning){ await bot("Of course. What else can I help you with?"); }
+  else { await bot("Hello, and welcome to Account Management. I'm your Account Assistant. How can I help you today?"); }
+  quick([{label:"Phone number update", p:true, go:intent}]);
+}
+async function intent(){
+  state = "INTENT_ACK";
+  const m = await bot('I can help you with updating your office phone number. Is that what you would like to update? <button class="info" aria-label="What is this?" id="tipbtn">i</button>');
+  m.querySelector(".info").onclick = e => tip(e.currentTarget);
+  state = "AWAIT_DECISION";
+  quick([{label:"Yes, update", p:true, go:startUpdate},{label:"No, something else", go:altMenu}]);
+}
+let pop;
+function tip(anchor){
+  if (pop){ pop.remove(); pop = null; return; }
+  pop = document.createElement("div"); pop.className = "pop"; pop.setAttribute("role","dialog");
+  pop.innerHTML = '<button aria-label="Close">✕</button><b>About your office phone number</b>We use your office phone number for corporate verification, urgent administrative alerts, and internal routing.';
+  document.body.appendChild(pop);
+  const r = anchor.getBoundingClientRect();
+  pop.style.left = Math.max(8, Math.min(r.left - 20, innerWidth - 300)) + "px";
+  pop.style.top = (r.bottom + 8) + "px";
+  pop.querySelector("button").onclick = () => { pop.remove(); pop = null; anchor.focus(); };
+}
+document.addEventListener("click", e => { if (pop && !pop.contains(e.target) && !e.target.closest(".info")){ pop.remove(); pop = null; } });
+document.addEventListener("keydown", e => { if (e.key === "Escape" && pop){ pop.remove(); pop = null; } });
+
+// ---------- Phase 2 ----------
+function fmt(country, digits){
+  let out = [], i = 0;
+  country.f.forEach(n => { const p = digits.slice(i, i + n); if (p) out.push(p); i += n; });
+  const s = out.join(" ");
+  return country.f.length === 3 && country.d === "+1" ? (out[0] ? "(" + out[0] + (out[0].length === 3 ? ")" : "") : "") + (out[1] ? " " + out[1] : "") + (out[2] ? "-" + out[2] : "") : s;
+}
+const PH = ["(555) 123-4567","(555) 123-4567","7911 123456","8123 4567","98765 43210","412 345 67"];
+const label = o => C[o.ci].d + " " + fmt(C[o.ci], o.d);
+const full = o => o ? C[o.ci].d + " " + o.d : "none";
+const mask = t => t.replace(/\d(?=[\d\s\-()]*\d{4}$)/g, "•");
+const changed = i => full(work[i]) !== full(CUR[i]);
+let work = CUR.map(o => ({...o}));
+const sty = "align-self:flex-start;padding:6px 14px";
+
+function renderCurrent(){
+  const card = document.createElement("div"); card.className = "card";
+  card.innerHTML = CUR.map((o, i) => `<div class="kv"><label>Office phone ${i + 1}</label><div class="big">${esc(label(o))}</div><div class="row"><button class="q" data-a="edit" data-i="${i}" style="${sty}">Edit</button>${i === 1 ? `<button class="q" data-a="rm" data-i="1" style="${sty}">Remove</button>` : ""}</div></div>`).join("");
+  log.appendChild(card); scroll();
+  card.querySelectorAll("button").forEach(b => b.onclick = () => {
+    lock(card); const i = +b.dataset.i;
+    if (b.dataset.a === "rm"){ user("Remove office phone 2"); removeFlow(startUpdateAgain); }
+    else { user("Edit office phone " + (i + 1)); enterNumber(i); }
+  });
+}
+async function startUpdate(){
+  state = "SHOW_CURRENT"; work = CUR.map(o => ({...o}));
+  await bot("Here are the office phone numbers we currently have on file. Select Edit to change a number. You can also remove office phone 2. Office phone 1 must stay on file.");
+  renderCurrent();
+}
+async function startUpdateAgain(){ await bot("No problem. Which number would you like to update?"); renderCurrent(); }
+
+async function removeFlow(back){
+  state = "CONFIRM_REMOVE";
+  await bot("Are you sure you want to remove office phone number 2? Office phone number 1 will stay on file.");
+  quick([{label:"Yes, remove", p:true, go:() => { work[1] = null; preview(); }},{label:"No, keep it", go:back}]);
+}
+
+async function enterNumber(slot, pre, msg){
+  state = "COLLECT_NUMBER";
+  await bot(msg || `Please enter your new office phone number ${slot + 1}, including the country/region code.`);
+  const card = document.createElement("div"); card.className = "card";
+  const opts = C.map((c, i) => `<option value="${i}">${c.fl} ${c.d} ${c.n}</option>`).join("");
+  card.innerHTML = `<label for="cc">Office phone ${slot + 1}: country or region</label><div class="f"><select id="cc">${opts}</select><input class="n" id="num" inputmode="tel" autocomplete="off" aria-label="Office phone ${slot + 1}" placeholder="${PH[0]}"></div><p class="hint" id="hint"></p><button class="q p" id="go" disabled>Continue</button>`;
+  log.appendChild(card); scroll();
+  const cc = card.querySelector("#cc"), num = card.querySelector("#num"), go = card.querySelector("#go"), hint = card.querySelector("#hint");
+  const cur = () => C[cc.value];
+  const digits = () => num.value.replace(/\D/g, "").slice(0, cur().len);
+  const ok = () => digits().length === cur().len;
+  const upd = () => { num.value = fmt(cur(), digits()); if (ok()){ num.classList.remove("bad"); hint.textContent = ""; } go.disabled = !ok(); };
+  cc.onchange = () => { num.placeholder = PH[cc.value]; num.value = ""; upd(); };
+  num.oninput = upd;
+  num.onblur = () => { const bad = num.value && !ok(); num.classList.toggle("bad", !!bad); hint.textContent = bad ? "Please enter a valid phone number for the selected country/region." : ""; };
+  num.onkeydown = e => { if (e.key === "Enter"){ e.preventDefault(); submit(); } };
+  if (pre){ cc.value = pre.ci; num.placeholder = PH[pre.ci]; num.value = pre.d; }
+  upd();
+  const submit = async () => {
+    if (go.disabled) return;
+    const v = {ci: +cc.value, d: digits()}, other = 1 - slot;
+    lock(card); user(label(v));
+    if (full(v) === full(work[other])){
+      state = "ERR_DUPLICATE";
+      await bot(`That's the same as your office phone number ${other + 1}. The two numbers must be different. Please enter a different number.`, "err");
+      return enterNumber(slot, v, "Please enter a different office phone number.");
+    }
+    if (work[slot] && full(v) === full(CUR[slot])){
+      state = "ERR_DUPLICATE";
+      await bot("That's the same as the office phone number we already have on file. Please enter a different number.", "err");
+      return enterNumber(slot, v, "Please enter a different office phone number.");
+    }
+    work[slot] = v; preview();
+  };
+  go.onclick = submit;
+  num.focus();
+}
+
+async function preview(){
+  state = "PREVIEW";
+  await bot("Thanks. Please review your office phone numbers below. You can make more changes, or confirm to save.");
+  const card = document.createElement("div"); card.className = "card";
+  const any = changed(0) || changed(1);
+  const tag = i => !work[i] ? '<span style="color:var(--err);font-weight:600">Removed</span>' : changed(i) ? '<span style="color:var(--ok);font-weight:600">New</span>' : "No change";
+  const act = i => !work[i]
+    ? `<div class="row"><button class="lnk" data-a="undo" data-i="1">Undo removal</button><button class="lnk" data-a="edit" data-i="1">Enter a new number</button></div>`
+    : `<div class="row"><button class="lnk" data-a="edit" data-i="${i}">Edit</button>${i === 1 ? '<button class="lnk" data-a="rm" data-i="1">Remove</button>' : ""}</div>`;
+  card.innerHTML = "<label>Your office phone numbers</label>" + work.map((o, i) => `<div class="kv"><label>Office phone ${i + 1} · ${tag(i)}</label><div class="big"${o ? "" : ' style="color:var(--muted);text-decoration:line-through"'}>${esc(o ? label(o) : label(CUR[i]))}</div>${act(i)}</div>`).join("") + `<p class="hint" style="color:var(--muted)">${any ? "" : "Make at least one change to continue: edit a number or remove office phone 2."}</p><button class="q p" id="ok"${any ? "" : " disabled"}>Confirm</button>`;
+  log.appendChild(card); scroll();
+  card.querySelectorAll(".lnk").forEach(b => b.onclick = () => {
+    lock(card); const i = +b.dataset.i, a = b.dataset.a;
+    if (a === "undo"){ user("Undo removal"); work[1] = {...CUR[1]}; return preview(); }
+    if (a === "rm"){ user("Remove office phone 2"); return removeFlow(preview); }
+    user("Edit office phone " + (i + 1)); enterNumber(i, work[i]);
+  });
+  card.querySelector("#ok").onclick = () => { lock(card); user("Confirm"); reauth(); };
+}
+function reauth(){
+  state = "BIOMETRIC_PROMPT"; fails = 0; faceModal();
+}
+function faceModal(){
+  const s = document.createElement("div"); s.className = "scrim";
+  s.innerHTML = '<div class="dlg" role="dialog" aria-modal="true"><div class="face" aria-hidden="true">☺</div><h2>Face ID</h2><p>Confirm it\'s you to update your office phone number.</p><button class="q p" id="y">Simulate: success</button><button class="q" id="n">Simulate: failure</button><button class="lnk" id="x" style="align-self:center">Cancel</button></div>';
+  document.body.appendChild(s);
+  s.querySelector("#y").focus();
+  s.querySelector("#y").onclick = () => { s.remove(); process(); };
+  s.querySelector("#n").onclick = () => { s.remove(); authFail(); };
+  s.querySelector("#x").onclick = () => { s.remove(); authFail(); };
+}
+async function authFail(){
+  fails++; state = "ERR_AUTH_FAILED";
+  if (fails >= 3){
+    state = "AUTH_FALLBACK";
+    await bot("For your security, biometric verification is temporarily unavailable. Please use your passcode to continue.", "err");
+    quick([{label:"Enter passcode", p:true, go:() => { process(); }}]);
+    return;
+  }
+  await bot("We couldn't verify your identity. Would you like to try again?", "err");
+  quick([{label:"Try again", p:true, go:faceModal},{label:"Cancel update", go:async () => {
+    state = "CANCELLED";
+    await bot("Understood. I haven't made any changes to your office phone number."); anythingElse();
+  }}]);
+}
+let failNext = false;
+async function process(){
+  state = "PROCESSING"; busy = true;
+  const t = add("bot", "Verifying…"); await wait(1100); t.remove(); busy = false;
+  if (failNext){ failNext = false; state = "ERR_SYSTEM";
+    await bot("Something went wrong, and your office phone number was not updated. Please try again.", "err");
+    quick([{label:"Try again", p:true, go:process},{label:"Back to menu", go:() => greet(true)}]); return; }
+  state = "UPDATE_SUCCESS";
+    const n = [0, 1].filter(changed).length, onlyRm = n === 1 && !work[1];
+  const head = onlyRm ? "Office phone number 2 has been successfully removed." : n > 1 ? "Your office phone numbers have been successfully updated." : "Your office phone number has been successfully updated.";
+  await bot('<div class="t">✓ ' + head + '</div><div style="color:var(--muted);margin-top:4px">' + work.map((o, i) => "Office phone " + (i + 1) + ": " + (o ? esc(mask(label(o))) + (changed(i) ? " (updated)" : " (unchanged)") : "Removed")).join("<br>") + '</div>', "ok");
+  anythingElse();
+}
+
+// ---------- Phase 3 ----------
+async function altMenu(){
+  state = "ALT_MENU"; badPick = 0;
+  await bot("No problem. Which number would you like to update instead?");
+  await bot("Please select an option:<br><b>1)</b> Phone number to receive security notifications<br><b>2)</b> Investment order phone number");
+  state = "AWAIT_ALT_SELECTION";
+  quick([{label:"1", echo:"1", go:() => redirect(1)},{label:"2", echo:"2", go:() => redirect(2)},{label:"Something else", go:liveAgentOffer}]);
+}
+async function redirect(n){
+  state = "REDIRECT_GUIDANCE";
+  const msg = n === 1 ? "I'm sorry, I cannot help you update your security notification number here. You can update this by going to <b>More &gt; Admin tools &amp; notifications &gt; Manage your contact information</b>."
+    : n === 2 ? "I'm sorry, I cannot help you update your investment order phone number here. You can update this by going to <b>[path to be confirmed]</b>."
+    : "I'm sorry, I can't help with that here. For other requests, please visit <b>More &gt; Admin tools &amp; notifications</b> or contact customer support.";
+  await bot(msg);
+  anythingElse();
+}
+
+async function liveAgentOffer(){
+  state = "LIVE_AGENT_OFFER";
+  await bot("I'm sorry, I can't help with that here. Would you like me to connect you to a live agent?", "err");
+  quick([{label:"Connect to live agent", p:true, go:async () => {
+    state = "LIVE_AGENT_HANDOFF";
+    await bot("Connecting you to a live agent now. Please stay in the chat. Your conversation so far will be shared so you don't need to repeat yourself.");
+  }},{label:"No, thanks", go:anythingElse}]);
+}
+
+// ---------- Closure ----------
+async function anythingElse(){
+  state = "ANYTHING_ELSE";
+  await bot("Is there anything else I can help you with today?");
+  quick([{label:"Yes", go:() => greet(true)},{label:"No, that's all", go:end}]);
+}
+async function end(){
+  state = "END_SESSION";
+  await bot("Thank you for banking with us. Have a great day!");
+  const r = document.createElement("div"); r.className = "row";
+  r.innerHTML = '<span style="color:var(--muted);font-size:13px;align-self:center">Rate this chat</span><button class="q" aria-label="Helpful">👍</button><button class="q" aria-label="Not helpful">👎</button>';
+  r.querySelectorAll("button").forEach(b => b.onclick = () => { r.querySelectorAll("button").forEach(x => x.disabled = true); b.classList.add("sel"); });
+  log.appendChild(r); scroll();
+}
+
+// ---------- Free-text routing ----------
+$("#form").onsubmit = async e => {
+  e.preventDefault();
+  const v = txt.value.trim(); if (!v || busy) return; txt.value = "";
+  user(v); const l = v.toLowerCase();
+  if (state === "GREETING" && /office|phone|number|update/.test(l)) return intent();
+  if (state === "AWAIT_DECISION"){ if (/^(y|yes)/.test(l)) return startUpdate(); if (/^(n|no)/.test(l)) return altMenu(); }
+  if (state === "AWAIT_ALT_SELECTION"){
+    if (/^1\b/.test(l)) return redirect(1);
+    if (/^2\b/.test(l)) return redirect(2);
+    return liveAgentOffer();
+  }
+  if (state === "ANYTHING_ELSE"){ if (/^(y|yes)/.test(l)) return greet(true); if (/^(n|no)/.test(l)) return end(); }
+  bot("Sorry, I didn't catch that. Please choose one of the options above.");
+};
+
+$("#restart").onclick = () => { log.innerHTML = ""; fails = 0; greet(false); };
+greet(false);
+</script>
+</body>
+</html>
